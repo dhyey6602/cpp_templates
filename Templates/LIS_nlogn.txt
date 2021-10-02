@@ -1,0 +1,14 @@
+	// strictly increasing 
+
+        multiset<int> lis;
+        for(auto x:arr)
+        {
+            if(x == 0)
+                continue;
+            auto itr = lis.lower_bound(x);
+            if(itr != lis.end())
+                lis.erase(itr);
+            lis.insert(x);
+        }
+
+	// non - decreasing use upper_bound

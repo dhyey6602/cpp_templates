@@ -1,0 +1,84 @@
+pll p0;
+
+ll dist(pll a , pll b)
+{
+        return (a.F - b.F)*(a.F - b.F) + (a.S - b.S)*(a.S - b.S);
+}
+
+pll nxt(stack<pll> &s)
+{
+        pll p = s.top();
+        s.pop();
+        if(!s.empty())
+        {
+            pll ans = s.top();
+            s.push(p);
+            return ans;
+        }
+        else
+        {
+            s.push(p);
+            return p;
+        }
+}
+
+ll orient(pll p , pll q , pll r)
+{
+        ll ret = (q.S - p.S) * (r.F - q.F);
+        ret -= (q.F - p.F) * (r.S - q.S);
+        if(ret == 0)
+                return 0;
+        else if(ret > 0)
+                return 1;
+        else
+                return 2;
+}
+
+bool cmp(pll p1 , pll p2)
+{
+        ll ori = orient(p0,p1,p2);
+        if(ori == 0)
+        {
+                if(dist(p0,p2) >= dist(p0,p1))
+                        return true;
+                else
+                        return false;
+        }
+        if(ori == 2)
+                return true;
+        else
+                return false;
+}
+
+ll hull(vector<pll> v,ll n)
+{
+        ll ymn = v[0].S;
+        ll mn = 0;
+        for(ll i=1;i<n;i++)
+        {
+                ll y = v[i].S;
+                if(y < ymn or (ymn == y and v[i].F < v[mn].F))
+                        ymn = v[i].S , mn = i;
+        }
+        swap(v[0],v[mn]);
+        p0 = v[0];
+        sort(v.begin(),v.end(),cmp);
+        ll m = 1;
+        for(ll i=1;i<n;i++)
+        {
+                while(i+1<n and orient(p0,v[i],v[i+1]) == 0)
+                        i++;
+                v[m++] = v[i];
+        }
+        stack<pll> s;
+        s.push(v[0]) , s.push(v[1]) , s.push(v[2]);
+        for(ll i=3;i<m;i++)
+        {
+                while(!s.empty() and orient(nxt(s),s.top(),v[i]) != 2)
+                        s.pop();
+                s.push(v[i]);
+        }
+	// stack contains all points
+        ll ans = 0;
+        return ans;
+}

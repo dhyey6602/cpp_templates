@@ -1,0 +1,24 @@
+    
+    #define iterator vector<vector<ll>>::iterator
+
+    // [l, r) is the interval to be sorted
+    ll sort_count(iterator l, iterator r) {
+
+        if (r - l <= 1) 
+		return;
+ 
+        // step 1. find the middle
+        iterator m = l + (r - l) / 2;
+
+        // step 2. sort left and right subarray
+        ll count = sort_count(l, m) + sort_count(m, r);
+
+        
+	/* step 3. write your code here for counting the pairs (i, j).*/
+	
+			
+        // step 4. call inplace_merge to merge
+        inplace_merge(l, m, r);
+
+        return count;
+    }

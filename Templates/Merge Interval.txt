@@ -1,0 +1,17 @@
+    vector<vector<ll>> merge(vector<vector<ll>>& a) {
+        sort(a.begin(),a.end());
+        vector<vector<ll>> ans;
+        ll n = a.size();
+        for(ll i=0;i<n;i++)
+        {
+            ll curend = a[i][1];
+            ll curstart = a[i][0];
+        
+            while(i+1<n and a[i+1][0] <= curend)
+                curend=max(curend,a[i+1][1]),i++;
+            
+            ans.push_back({curstart,curend});
+        }
+        return ans;
+    }
+};

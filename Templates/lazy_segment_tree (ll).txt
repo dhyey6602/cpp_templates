@@ -1,0 +1,97 @@
+template<typename T>
+class segment
+{
+public:
+	int n;
+	vector<T> st;
+	vector<bool> isleft;
+	vll lazy;
+	vll a;
+ 
+	segment() {}
+ 
+	segment(ll _n, vector<ll> &_a)
+	{
+		n = _n;
+		st.resize(4 * n + 10);
+		isleft.resize(4 * n + 10, 0);
+		lazy.resize(4 * n + 10, 0);
+		a = _a;
+	}
+ 
+	T merge(T &a, T &b)
+	{
+		
+	}
+ 
+	void propagate(ll si, ll l, ll r)
+	{
+		if (l != r)
+		{
+			isleft[2 * si] = 1;
+			isleft[2 * si + 1] = 1;
+			lazy[2 * si] += lazy[si];
+			lazy[2 * si + 1] += lazy[si];
+		}
+		st[si].F += lazy[si];
+		lazy[si] = 0;
+		isleft[si] = 0;
+	}
+ 
+	void create(ll si, ll l, ll r)
+	{
+		if (l == r)
+		{
+			st[si] = {a[l] , l};
+			return;
+		}
+		int mid = (l + r) >> 1;
+		create(2 * si, l, mid);
+		create(2 * si + 1, mid + 1, r);
+		st[si] = merge(st[2 * si], st[2 * si + 1]);
+	}
+ 
+	void update(ll si, ll l, ll r, ll ql, ll qr, ll val)
+	{
+		if (isleft[si])
+		{
+			propagate(si, l, r);
+		}
+		if (ql > r or qr<l or l>r)
+		{
+			return;
+		}
+		if (ql <= l and qr >= r)
+		{
+			isleft[si] = 1;
+			lazy[si] += val;
+			propagate(si, l, r);
+			return;
+		}
+		ll mid = (l + r) >> 1;
+		update(2 * si, l, mid, ql, qr, val);
+		update(2 * si + 1, mid + 1, r, ql, qr, val);
+		st[si] = merge(st[2 * si], st[2 * si + 1]);
+	}
+ 
+	T query(ll si, ll l, ll r, ll ql, ll qr)
+	{
+		if (isleft[si])
+		{
+			propagate(si, l, r);
+		}
+		if (ql > r or qr < l or l > r)
+		{
+			return {inf , inf};
+		}
+		if (ql <= l and qr >= r)
+		{
+			return st[si];
+		}
+		ll mid = (l + r) >> 1;
+		T ansl = query(2 * si, l, mid, ql, qr);
+		T ansr = query(2 * si + 1, mid + 1, r, ql, qr);
+		T ans = merge(ansl, ansr);
+		return ans;
+	}
+};
