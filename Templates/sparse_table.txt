@@ -1,0 +1,34 @@
+/*
+// intialize mat[n][0] while taking input
+for(int i = 0; i < n; i++) {
+        cin >> a[i];
+        m[i][0] = a[i];
+}
+*/
+
+
+const ll lg = 20;
+vll a(N);
+ll mat[N][lg];
+ll bin_log[N];
+ll n;
+
+ll query(ll L, ll R) { // O(1)
+	ll length = R - L + 1;
+	ll k = bin_log[length];
+	return min(mat[L][k], mat[R-(1<<k)+1][k]);
+}
+
+void pre()
+{
+        bin_log[1] = 0;
+	for(ll i = 2; i <= n; i++) {
+		bin_log[i] = bin_log[i/2]+1;
+	}
+        
+        for(ll k = 1; k < lg; k++) {
+		for(ll i = 0; i + (1 << k) - 1 < n; i++) {
+			mat[i][k] = min(mat[i][k-1], mat[i+(1<<(k-1))][k-1]);
+		}
+	}
+}

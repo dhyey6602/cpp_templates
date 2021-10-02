@@ -1,0 +1,43 @@
+ll n, lg , timer;
+vll a[N];
+vll tin(N), tout(N);
+vector<vll> up;
+
+void dfs(ll u, ll p)
+{
+        tin[u] = ++timer;
+        up[u][0] = p;
+        for (ll i = 1; i <= lg; ++i)
+                up[u][i] = up[up[u][i-1]][i-1];
+
+        for (ll v : a[u]) {
+                if (v != p)
+                        dfs(v, u);
+        }
+        tout[u] = ++timer;
+}
+
+bool is_ancestor(ll u, ll v)
+{
+        return tin[u] <= tin[v] && tout[u] >= tout[v];
+}
+
+ll lca(ll u, ll v)
+{
+        if (is_ancestor(u, v))
+                return u;
+        if (is_ancestor(v, u))
+                return v;
+        for (ll i = lg; i >= 0; --i) {
+                if (!is_ancestor(up[u][i], v))
+                        u = up[u][i];
+        }
+        return up[u][0];
+}
+
+void preprocess(ll root) {
+        timer = 0;
+        lg = ceil(log2(n));
+        up.assign(n+1, vll(lg + 1));
+        dfs(root, root);
+}

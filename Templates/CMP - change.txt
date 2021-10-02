@@ -1,0 +1,22 @@
+bool func(pair<ll,pll> &a,pair<ll,pll> &b ){
+        if(a.ff != b.ff)return a.ff < b.ff;
+        return a.ss.ff > b.ss.ss;
+}
+
+
+
+class cmp{
+	public:
+	bool operator()(pair<ll,pll> &a,pair<ll,pll> &b){
+	        if(a.ff != b.ff)return a.ff < b.ff;
+                        return a.ss.ff > b.ss.ss;       
+	}
+};
+
+struct comp{
+    bool operator()(vector<int>&a,vector<int>&b){
+        int a1=a[0]*a[1];
+        int a2=b[0]*b[1];
+        return a1>=a2;
+    }
+};

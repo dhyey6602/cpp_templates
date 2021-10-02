@@ -1,0 +1,80 @@
+struct query {
+	ll left;
+	ll right;
+	ll id;
+};
+
+const ll N1 = 300005;
+const ll N2 = 1048578;
+const ll SZ = sqrt(N1) + 1;
+
+ll a[N1];
+query q[N2];
+ll fre[N1];
+ll frefre[N1];
+ll ans[N2];
+ll answer = 0 , n , m;
+
+bool compare(struct query &q1, struct query &q2)
+{
+	ll d1 = q1.left / SZ;
+	ll d2 = q2.left / SZ;
+	if(d1 != d2)
+		return d1 < d2;
+	else
+		return (d1 & 1) ? q1.right < q2.right : q1.right > q2.right;
+}
+
+void add(ll x)
+{
+        fre[x]++;
+        frefre[fre[x]]++;
+        answer = max(answer,fre[x]);
+}
+ 
+void remove(ll x) 
+{
+	if(fre[x] == answer and frefre[answer] == 1)
+                answer--;
+        frefre[fre[x]]--;
+        fre[x]--;
+}
+
+void solve()
+{
+	for(ll i = 1 ; i <= n ; i++ )
+                cin >> a[i];
+        for(ll i = 1 ; i <= m ; i++ )
+                cin >> q[i].left >> q[i].right , q[i].id = i;
+        
+        sort(q + 1 , q + m + 1 , compare);
+	ll l = 1;
+	ll r = 0;
+
+	for(ll i = 1; i <= m; ++i) 
+        {
+		while(l < q[i].left)	
+                        remove(a[l++]);
+		while(l > q[i].left)	
+                        add(a[--l]);
+		while(r < q[i].right)	
+                        add(a[++r]);
+		while(r > q[i].right) 	
+                        remove(a[r--]);
+		ans[q[i].id] = max(1ll,2*answer - (q[i].right - q[i].left + 1)) ;
+	}
+
+	for(ll i = 1; i <= m; ++i)
+		cout << ans[i] << "\n";
+}
+
+
+// bool compare(struct query &d1, struct query &d2)
+// {
+// 	ll b1 = d1.l / SZ;
+// 	ll b2 = d2.l / SZ;
+// 	if(b1 != b2)
+// 		return b1 < b2;
+// 	else
+// 		return d1.r < d2.r;
+// }

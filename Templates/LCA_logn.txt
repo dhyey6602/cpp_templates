@@ -1,0 +1,59 @@
+ll n, lg = 20;
+vll a[N];
+vll val(N), depth(N);
+vector<vll> up(N,vll (lg+1));
+vector<vll> dp(N,vll (lg+1));
+
+void dfs(ll u, ll p, ll h)
+{
+        if(p != 0)
+                dp[u][0] = max(val[p],val[u]);
+        depth[u] = h;
+        up[u][0] = p;
+        for (ll i = 1; i <= lg; ++i)
+        {
+                up[u][i] = up[up[u][i-1]][i-1];
+                dp[u][i] = max(dp[u][i-1],dp[ up[u][i-1] ][i-1]);
+        }
+
+        for (ll v : a[u]) {
+                if (v != p)
+                        dfs(v, u, h+1);
+        }
+}
+
+ll find(ll u,ll v)
+{
+        ll ans = max(val[u],val[v]);
+        if(depth[u] > depth[v])
+                swap(u,v);
+        
+        // uplift v such that it has same height as u
+        for(ll i=lg;i>=0;i--)
+        {
+                if(depth[up[v][i]] >= depth[u])
+                {
+                        ans = max(ans,dp[v][i]);
+                        v = up[v][i];
+                }
+        }
+        
+        // both on same path
+        if(v == u)
+                return ans;
+        else
+        {
+                // uplift till LCA
+                for(ll i=lg;i>=0;i--)
+                {
+                        if(up[u][i] != up[v][i])
+                        {
+                                ans = max({ans,dp[u][i],dp[v][i]});
+                                v = up[v][i];
+                                u = up[u][i];
+                        }
+                }
+                ans = max({ans,dp[u][0],dp[v][0]});
+        }
+        return ans;
+}
